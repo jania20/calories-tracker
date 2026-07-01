@@ -20,17 +20,21 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+----
+## PROJECT OVERVIEW
+ **Calories-tracker** is a web application designed to help users monitor and track their daily calorie intake.
 
-To learn more about Next.js, take a look at the following resources:
+### key features
+ - **Authentication/login system:** A secure login and sign-up section for new users that validates the fields filled by user.
+ -**Main dashboard:** An interface displaying a visual gauge at the top as an indicator for quick calorie tracking, accompanied by a macronutrient indicator(protein, carbohydrates and fats).
+ -**Meal Management:** Located in the section below, dedicated to adding or deleting products, where user can log specific food and adjust portions for accurate macronutrient counting.
+ -**Calories History:**A detailed calendar view at the bottom showing a summary of calories and macronutrinets on each specific day.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+ ---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+ ## Tools 
+ * Figma
+ * Git & Github
+ * React and Next.js
+ * Prisma
+ * SQLite
