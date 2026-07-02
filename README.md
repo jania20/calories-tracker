@@ -26,9 +26,9 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ### key features
  - **Authentication/login system:** A secure login and sign-up section for new users that validates the fields filled by user.
- -**Main dashboard:** An interface displaying a visual gauge at the top as an indicator for quick calorie tracking, accompanied by a macronutrient indicator(protein, carbohydrates and fats).
- -**Meal Management:** Located in the section below, dedicated to adding or deleting products, where user can log specific food and adjust portions for accurate macronutrient counting.
- -**Calories History:**A detailed calendar view at the bottom showing a summary of calories and macronutrinets on each specific day.
+ - **Main dashboard:** An interface displaying a visual gauge at the top as an indicator for quick calorie tracking, accompanied by a macronutrient indicator(protein, carbohydrates and fats).
+ - **Meal Management:** Located in the section below, dedicated to adding or deleting products, where user can log specific food and adjust portions for accurate macronutrient counting.
+ - **Calories History:**A detailed calendar view at the bottom showing a summary of calories and macronutrinets on each specific day.
 
  ---
 
