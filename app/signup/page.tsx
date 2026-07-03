@@ -18,6 +18,7 @@ export default function SignUpPage(){
     const[email,setEmail] = useState("");
     const [password,setPassword] = useState("");
 
+
     //Event executed once user click on the log in button
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
@@ -52,7 +53,7 @@ export default function SignUpPage(){
     }
 
     //lastname function
-    const validLastname = (lastnamw: string) : boolean =>{
+    const validLastname = (lastname: string) : boolean =>{
         const regex = /^[a-zA-Z]$/;
         return regex.test(lastname);
     }
