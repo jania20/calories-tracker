@@ -4,6 +4,7 @@
 import { useState} from 'react';
 //To import tthe styles defined on the login_style.css
 import styles from './signup_style.module.css'
+import {useRouter} from "next/navigation";
 
 export default function SignUpPage(){
 
@@ -17,10 +18,11 @@ export default function SignUpPage(){
     const [name,setName] = useState("");
     const[email,setEmail] = useState("");
     const [password,setPassword] = useState("");
+    const router = useRouter();
 
 
     //Event executed once user click on the log in button
-    const handleLogin = (e: React.FormEvent) => {
+    const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
             if(!validName(name)){
@@ -41,20 +43,44 @@ export default function SignUpPage(){
                 alert("Password incorrecto. Debe tener longitud minima de 8 caracteres, una mayuscula, un numero y un caracter ")
                 return;
             }
-        }
+
+            const response = await fetch("/api/register",{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: name.trim(),
+                    lastname: lastname.trim(), 
+                    email, 
+                    password
+                })
+            });
+            
+            //to use the useRouter()
+            
+            const data = await response.json();
+            if(response.ok){
+                alert("Usuario registrado exitosamente");
+                router.push("/login");
+            }else{
+                alert(data.error);
+                }
+            }
+        
 
     /*==========================================================
                         FUNCTIONS
     ==========================================================*/
     //name function
     const validName = (name: string) : boolean =>{
-            const regex = /^[a-zA-Z]$/;
+            const regex = /^[a-zA-Z\s]+$/;
             return regex.test(name);
     }
 
     //lastname function
     const validLastname = (lastname: string) : boolean =>{
-        const regex = /^[a-zA-Z]$/;
+        const regex = /^[a-zA-Z\s]+$/;
         return regex.test(lastname);
     }
     
@@ -70,6 +96,7 @@ export default function SignUpPage(){
         return regex.test(password);
     }
 
+
     
     /*==========================================================
                            UI
@@ -84,7 +111,7 @@ export default function SignUpPage(){
              
             <div className={styles.form_container}>
                 <h3>REGISTER NEW ACCOUNT</h3>
-                    <form onSubmit={handleLogin}>
+                    <form onSubmit={handleRegister}>
                         <div className={styles.fields}>
                             <label htmlFor="input_name">Name: </label>
                             <input type="text" 
@@ -124,8 +151,8 @@ export default function SignUpPage(){
                                 />
                         </div>
 
-
-                        <button disabled={name==="" || lastname==="" || email==="" || password===""? true:false}>Sign Up</button>
+                        <button disabled={name==="" || email==="" || password==="" ? true:false}>Sign Up</button>
+                        
 
                         <p>Do you already have an account? <a href="/login">Log in</a></p>
                     </form>

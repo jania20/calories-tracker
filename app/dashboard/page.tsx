@@ -1,5 +1,4 @@
 'use client';
-import Link from 'next/link';
 import styles from './dashboard_style.module.css';
 //Importation from an extern library to use the visual gauge
 //import Stack from '@mui/material/Stack';
