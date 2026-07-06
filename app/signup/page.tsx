@@ -6,6 +6,11 @@ import { useState} from 'react';
 import styles from './signup_style.module.css'
 import {useRouter} from "next/navigation";
 
+
+/*import {Icon} from 'react-icons-kit';
+import {eyeOff} from 'react-icons-kit/feather/eyeOff';
+import {eye} from 'react-icons-kit/feather/eye'*/
+
 export default function SignUpPage(){
 
      /*==========================================================
@@ -20,6 +25,9 @@ export default function SignUpPage(){
     const [password,setPassword] = useState("");
     const router = useRouter();
 
+    
+   // const [type, setType] = useState('password');
+   // const [icon, setIcon] = useState(eyeOff);
 
     //Event executed once user click on the log in button
     const handleRegister = async (e: React.FormEvent) => {
@@ -67,6 +75,18 @@ export default function SignUpPage(){
                 alert(data.error);
                 }
             }
+
+            /*Conditional to show password within the input 
+
+            const handleToggle = () => {
+            if (type==='password'){
+                setIcon(eye);
+                setType('text')
+            } else {
+                setIcon(eyeOff)
+                setType('password')
+            }
+            }*/
         
 
     /*==========================================================
@@ -80,7 +100,7 @@ export default function SignUpPage(){
 
     //lastname function
     const validLastname = (lastname: string) : boolean =>{
-        const regex = /^[a-zA-Z\s]+$/;
+        const regex = /^[a-zA-Z\s]*$/;
         return regex.test(lastname);
     }
     
@@ -143,7 +163,7 @@ export default function SignUpPage(){
 
                         <div className={styles.fields}>
                             <label htmlFor="input_password">Password: </label>
-                            <input type="password" 
+                            <input type={password} 
                                 id="input_password" 
                                 className={styles.input_password}
                                 value={password}
@@ -154,7 +174,7 @@ export default function SignUpPage(){
                         <button disabled={name==="" || email==="" || password==="" ? true:false}>Sign Up</button>
                         
 
-                        <p>Do you already have an account? <a href="/login">Log in</a></p>
+                        <p>Do you already have an account? <a href="/login"><span>Log in</span></a></p>
                     </form>
             </div>
         </section>
