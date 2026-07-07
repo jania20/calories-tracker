@@ -112,6 +112,12 @@ const dinnerToShow = showAllDinner
         window.location.reload();
     };
 
+    //to log out
+    const logout = () => {
+    localStorage.removeItem("userId");
+    window.location.href = "/login";
+};
+
 return(
 
     <>
@@ -121,7 +127,7 @@ return(
     ===========================================*/}
         <header className={styles.header}>
             <p>Calorie Tracker</p>
-            <a >Log out</a>
+            <a onClick={logout}>Log out</a>
          </header>
     
     {/*==========================================

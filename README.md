@@ -2,24 +2,6 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
 ----
 ## PROJECT OVERVIEW
  **Calories-tracker** is a web application designed to help users monitor and track their daily calorie intake.
@@ -28,7 +10,6 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
  - **Authentication/login system:** A secure login and sign-up section for new users that validates the fields filled by user.
  - **Main dashboard:** An interface displaying a visual gauge at the top as an indicator for quick calorie tracking, accompanied by a macronutrient indicator(protein, carbohydrates and fats).
  - **Meal Management:** Located in the section below, dedicated to adding or deleting products, where user can log specific food and adjust portions for accurate macronutrient counting.
- - **Calories History:**A detailed calendar view at the bottom showing a summary of calories and macronutrinets on each specific day.
 
  ---
 
@@ -38,3 +19,35 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
  * React and Next.js
  * Prisma
  * SQLite
+
+ ## Project Setup
+
+The project was created using Next.js with the App Router:
+
+```bash
+npx create-next-app@latest
+
+
+The application structure was organized into sections such as login, register, and dashboard. The development started with the frontend implementation, followed by backend integration and database configuration.
+
+Prisma and SQLite were used for database management. The database structure was defined in schema.prisma, and migrations were used to manage database changes. API routes were implemented to connect the frontend with the backend.
+
+During development, AI was used as a learning support tool to analyze possible solutions, understand new functionalities, review documentation, and troubleshoot errors while implementing features.
+
+## How to Run the Project
+
+1. Clone the repository:
+
+```bash
+git clone <repository-url>
+Install dependencies:
+npm install
+Configure the database using Prisma migrations:
+npx prisma migrate dev
+Start the development server:
+npm run dev
+Open the application:
+http://localhost:3000/login
+
+The application will be ready to use. Users can register, log in, and start tracking their meals and nutritional information.
+
