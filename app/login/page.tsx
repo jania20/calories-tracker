@@ -47,6 +47,8 @@ export default function LoginPage(){
                 alert(data.error);
                 return
             }
+
+            localStorage.setItem("userId", data.userId);
             
             router.push('/dashboard');
             

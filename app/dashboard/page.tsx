@@ -3,21 +3,10 @@ import styles from './dashboard_style.module.css';
 //Importation from an extern library to use the visual gauge
 //import Stack from '@mui/material/Stack';
 import * as React from 'react';
-import LinearProgress from "@mui/material/LinearProgress";
 import { useState } from "react";
 import AddFoodModal from './components/foodmodal/FoodModal';
 import { Gauge } from '@mui/x-charts/Gauge';
-
-const LinearBar_style = {
-    height: 12,
-    borderRadius: 5,
-    width: 200,
-    backgroundColor: '#8e8e8ea2',
-    '& .MuiLinearProgress-bar': {
-        backgroundColor: '#73bc99dc'
-    }
-};
-
+import { useEffect } from "react";
 
 
 export default function DashboardPage(){
@@ -39,6 +28,88 @@ export default function DashboardPage(){
     const closeModal = () => {
         setShowModal(false);
         setMealType("");
+    };
+
+    type Product = {
+        id: number;
+        foodname: string;
+        calories: number;
+        protein: number;
+        carbs: number;
+        fats: number;
+    }
+
+    const [breakfast, setBreakfast] = useState<Product[]>([]);
+    const [lunch, setLunch] =  useState<Product[]>([]);
+    const [dinner, setDinner] =   useState<Product[]>([]);
+
+
+
+        const userId =
+    typeof window !== "undefined"
+        ? Number(localStorage.getItem("userId"))
+        : null;
+
+    useEffect(() => {
+    if (!userId) return;
+
+    fetch(`/api/showproduct?userId=${userId}&mealType=breakfast`)
+        .then(res => res.json())
+        .then(setBreakfast);
+
+    fetch(`/api/showproduct?userId=${userId}&mealType=lunch`)
+        .then(res => res.json())
+        .then(setLunch);
+
+    fetch(`/api/showproduct?userId=${userId}&mealType=dinner`)
+        .then(res => res.json())
+        .then(setDinner);
+
+}, [userId]);
+
+
+const [showAllBreakfast, setShowAllBreakfast] = useState(false);
+const [showAllLunch, setShowAllLunch] = useState(false);
+const [showAllDinner, setShowAllDinner] = useState(false);
+
+const breakfastToShow = showAllBreakfast
+ ? breakfast: breakfast.slice(0,2);
+
+ const lunchToShow =showAllLunch
+    ? lunch
+    : lunch.slice(0,2);
+
+const dinnerToShow = showAllDinner
+    ? dinner
+    : dinner.slice(0,2);
+
+
+    const AllProducts = [
+        ...breakfast,
+        ...lunch, 
+        ...dinner
+    ]
+
+
+    const totalcalorias = AllProducts.reduce((total,item) => total + item.calories, 0);
+    const totalProtein = AllProducts.reduce((total,item) => total + item.protein,0);
+    const totalCarbs = AllProducts.reduce((total, item) => total + item.carbs,0);
+    const totalFats = AllProducts.reduce((total,item) => total + item. fats, 0);
+
+    const calorieGoal = 2000;
+    const gaugeValue = (totalcalorias/calorieGoal) * 100;
+
+    /*DELTE BUTTON */
+    const deleteProduct = async(id: number) =>{
+        await fetch("api/deleteproduct", {
+            method: "DELETE", 
+            headers: {
+                "Content-Type" : "application/json"
+              }, 
+              body: JSON.stringify({id})
+        }); 
+
+        window.location.reload();
     };
 
 return(
@@ -67,7 +138,7 @@ return(
                   ===================*/}
                  <Gauge
                     className={styles.gauge}
-                    value={75}
+                    value={gaugeValue}
                     startAngle={-110}
                     endAngle={110}
                     sx={{
@@ -76,7 +147,7 @@ return(
                             transform: 'translate(0px,0px)'
                         }
                     }}
-                    text={({ value, valueMax }) => `${value} / ${valueMax}`}
+                    text={() => `${totalcalorias} / ${calorieGoal}`}
                 />
 
                   {/*======================
@@ -85,14 +156,14 @@ return(
                 <div className={styles.goal_remaining_container}>
                     {/* goal */}
                     <div className={styles.goal}>
-                        <p>GOAL</p>
-                        <p>235 kcal</p>
+                        <p>{calorieGoal}</p>
+                        <p>{totalcalorias}</p>
                     </div>
 
                     {/* remaining */}
                     <div className={styles.remaining}>
                         <p>REMAINING</p>
-                        <p>345</p>
+                        <p>{calorieGoal - totalcalorias}</p>
                        
                     </div>
                 </div>
@@ -105,46 +176,25 @@ return(
                     {/* protein */}
                     <div className={styles.nutrient}>
                         <div className={styles.nutrient_header}>
-                            <span>Protein</span>
-                            <span>90/140gz</span>
+                            <span>Protein: </span>
+                            <span>{totalProtein}</span>
                         </div>
-                          
-                        <LinearProgress
-                            variant="determinate"
-                            value={75}
-                                    
-                            sx={LinearBar_style}
-                            />
                 </div>
                         
                 {/* carbohydrates */}
                 <div className={styles.nutrient}>
                         <div className={styles.nutrient_header}>
-                            <span>Carbohydrates</span>
-                            <span>90/140gz</span>
+                            <span>Carbohydrates: </span>
+                            <span>{totalCarbs}</span>
                     </div>
-                            
-                        <LinearProgress
-                            variant="determinate"
-                            value={75}
-                                    
-                            sx={LinearBar_style}
-                            />
                 </div>
                         
                 {/* fats */}
                 <div className={styles.nutrient}>
                     <div className={styles.nutrient_header}>
-                            <span>Fats</span>
-                            <span>90/140gz</span>
-                    </div>
-                         
-                <LinearProgress
-                    variant="determinate"
-                    value={75}
-                                    
-                    sx={LinearBar_style}
-                    />
+                            <span>Fats: </span>
+                            <span>{totalFats}</span>
+                        </div>
                     </div>
                 </div>
     </section>
@@ -162,16 +212,29 @@ return(
                         <h3>🌄 Breakfast</h3>
                         
                         <div className={styles.meal_content}>
-                            No foods added yet
+                            {breakfast.length === 0 ? (
+                                    "No foods added yet"
+                                ) : (
+                                    breakfastToShow.map((item) => (
+                                    <div key={item.id} className={styles.product_items}>
+                                        <p >
+                                        {item.foodname} - {item.calories}kcal |  Protein: {item.protein} | Carbohydrates: {item.carbs} | Fats: {item.fats}
+                                        </p>
+
+                                        <button className={styles.delete_button} onClick={() => deleteProduct(item.id)}>Delete</button>
+                                    </div> 
+                                    ))
+                                )}
                         </div>
 
-                        <button className={styles.view_more}>
-                            View more →
+                        <button className={styles.view_more}
+                        onClick={() => setShowAllBreakfast(!showAllBreakfast)}>
+                            {showAllBreakfast ? "view less" : "view more"}
                         </button>
 
-                         <button className={styles.add_food_button} onClick={() => {console.log("CLICK"); setMealType("breakfast");
-                         setShowModal(true);
-                           }}>
+                        <button className={styles.add_food_button} onClick={() => {console.log("CLICK"); setMealType("breakfast");
+                            setShowModal(true);
+                            }}>
                             + Add food
                         </button>
                     </div>
@@ -183,16 +246,27 @@ return(
                         <h3>🍽️ Lunch</h3>
                         
                         <div className={styles.meal_content}>
-                            No foods added yet
+                            {lunch.length === 0 ? (
+                                    "No foods added yet"
+                                ) : (
+                                    lunchToShow.map((item) => (
+                                   <div key={item.id} className={styles.product_items}>
+                                        <p >
+                                        {item.foodname} - {item.calories}kcal |  Protein: {item.protein} | Carbohydrates: {item.carbs} | Fats: {item.fats}
+                                        </p>
+
+                                        <button className={styles.delete_button} onClick={() => deleteProduct(item.id)}>Delete</button>
+                                    </div>  
+                                    ))
+                                )}
                         </div>
 
-                        <button className={styles.view_more}>
+                        <button className={styles.view_more} onClick={() => setShowAllLunch(!showAllLunch)}>
                             View more
                         </button>
 
-                        <button className={styles.add_food_button} onClick={() => {console.log("CLICK");   setMealType("lunch");
-                        setShowModal(true);
-                        
+                         <button className={styles.add_food_button} onClick={() => {console.log("CLICK"); setMealType("lunch");
+                            setShowModal(true);
                             }}>
                             + Add food
                         </button>
@@ -208,13 +282,25 @@ return(
                         <h3>🌙 Dinner</h3>
                         
                         <div className={styles.meal_content}>
-                            No foods added yet
-                        </div>
+                            {dinner.length === 0 ? (
+                                    "No foods added yet"
+                                ) : (
+                                    dinnerToShow.map((item) => (
+                                    <div key={item.id} className={styles.product_items}>
+                                        <p >
+                                        {item.foodname} - {item.calories}kcal |  Protein: {item.protein} | Carbohydrates: {item.carbs} | Fats: {item.fats}
+                                        </p>
 
-                        <button className={styles.view_more}>View more </button>
+                                        <button className={styles.delete_button} onClick={() => deleteProduct(item.id)}>Delete</button>
+                                    </div> 
+                                    ))
+                                )}
+                        </div> 
+
+                        <button className={styles.view_more} onClick={() => setShowAllDinner(!showAllDinner)}>View more </button>
                         
                         <button className={styles.add_food_button} onClick={() => {console.log("CLICK"); setMealType("dinner");
-                        setShowModal(true);
+                            setShowModal(true);
                             }}>
                             + Add food
                         </button>

@@ -48,6 +48,7 @@ export async function POST(request: Request) {
     }
 
     return Response.json({
-        mesage: "Login exitoso"
+        mesage: "Login exitoso",
+        userId: existingUser.id
     });
 }

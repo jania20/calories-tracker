@@ -21,41 +21,53 @@ export default function AddFoodModal({open, onClose, mealType}:Props){
    const [carbs, setcarbs] = useState("");
    const [fats, setfats]= useState("");
 
-   const validName = /^[a-zA-Z0-9]+$/;
-   const validnutrients = /^[0-9.]+$/;
-
+   
    
    async function handleAddProduct(e: React.FormEvent){
     e.preventDefault();
+
+    
 
     if(!foodname || !calories|| !protein || !carbs|| !fats){
         alert("Los campos no pueden estar vacios.");
         return;
     }
 
-    if(!validName.test(foodname) || !validnutrients.test(calories) || !validnutrients.test(protein) || !validnutrients.test(carbs) || !validnutrients.test(fats)) {
-      alert("Para de calorias, proteinas, carbohidratos y grasa solo se aceptan numeros enteros y puntos decimales");
-      return;
-    } 
+    if(isNaN(Number(calories)) || isNaN(Number(protein)) || isNaN(Number(carbs)) || isNaN(Number(fats))){
+      {alert("Solo numeros validos")}
+      return
+    }
 
-    console.log("Funcionanding");
-    
-    await fetch("/api/addproduct", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    foodname,
-    calories,
-    protein,
-    carbs,
-    fats,
-    mealType,
-    userId: 1,
-  }),
-});
-  }
+    const userId = Number(localStorage.getItem("userId"));
+    alert("Producto agregado exitosamente");
+
+      const response = await fetch("/api/addproduct", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        foodname,
+        calories,
+        protein,
+        carbs,
+        fats,
+        mealType,
+        userId,
+      }),
+    });
+
+     if (response.ok) {
+      window.location.reload();
+   }
+
+    onClose();
+    setfoodname("");
+    setcalories("");
+    setprotein("");
+    setcarbs("");
+    setfats("");
+    }
    
   
     console.log("Modal abierto:", open);
