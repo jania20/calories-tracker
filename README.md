@@ -40,14 +40,23 @@ During development, AI was used as a learning support tool to analyze possible s
 
 ```bash
 git clone <repository-url>
-Install dependencies:
-npm install
-Configure the database using Prisma migrations:
-npx prisma migrate dev
-Start the development server:
-npm run dev
-Open the application:
-http://localhost:3000/login
+Install dependencies: npm install
+Configure the database using Prisma migrations: npx prisma migrate dev
+Start the development server: npm run dev
+Open the application: http://localhost:3000/login
+```
 
 The application will be ready to use. Users can register, log in, and start tracking their meals and nutritional information.
+
+
+<img width="1530" height="864" alt="{BFA76819-A95F-4951-B11F-4172568BC837}" src="https://github.com/user-attachments/assets/4d4ec01a-0e27-4049-a25e-66dcc80b871c" />
+<img width="1365" height="873" alt="{B132B268-5C56-42FE-9D42-BFEA1AF29A78}" src="https://github.com/user-attachments/assets/068e86d8-cc99-4729-bb73-dd07ffd56c72" />
+<img width="1968" height="848" alt="{D341DE2C-3D29-40DD-8C84-1A3E7932DCC2}" src="https://github.com/user-attachments/assets/057f8c88-b515-4437-bd16-fbf9ad5ebdb3" />
+<img width="1718" height="600" alt="{C59D0DD4-7880-4520-A12A-397DCE05A647}" src="https://github.com/user-attachments/assets/62d9f7b3-771f-4ee1-b32d-315e66ac93c6" />
+
+
+
+
+
+
 
