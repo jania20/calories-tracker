@@ -11,6 +11,13 @@ export async function GET(req: Request) {
   const userId = Number(searchParams.get("userId"));
   const mealType = searchParams.get("mealType");
 
+  if (!userId) {
+  return NextResponse.json(
+    {error:"UserId es requerido"},
+    {status:400}
+  );
+}
+
   const products = await prisma.products.findMany({
     where: {
       userId,
