@@ -50,7 +50,7 @@ export default function LoginPage(){
 
             localStorage.setItem("userId", data.userId);
             
-            router.push('/dashboard');
+            router.push('/dashboardbackup');
             
         }
 

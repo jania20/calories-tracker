@@ -1,6 +1,5 @@
-
-
 .modal{   
+
     width: 450px;
     max-width: 90%;
     margin: 8% auto;
@@ -17,6 +16,10 @@
     flex-direction: column;
     gap: 16px;
 ;
+}
+
+.modal h2 {
+    color: black;
 }
 
 .nameProduct_input, .calories_input, .protein_input, .carbs_input, .fats_input{
