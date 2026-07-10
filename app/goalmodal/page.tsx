@@ -40,7 +40,7 @@ export default function AddGoal({open, onClose, userId}: Props){
         const num_carbs = Number(carbs_goal);
         const num_fats = Number(fats_goal);
         
-        const respuesta = await fetch('/api/addgoal', {
+        const respuesta = await fetch('/api/addgoalroute', {
             method: 'POST', 
             headers: {
                 'Content-Type' :  'application/json', 

@@ -46,7 +46,7 @@ export default function AddFoodModal({open, onClose, mealType, userId}:Props){
         window.location.reload();
 
         //To contect it to the back end
-        const connect = await fetch('/apieraser/addproduct',{
+        const connect = await fetch('/api/addproductroute',{
             method: 'POST',
             headers: {
                 'Content-Type' : 'application/json',

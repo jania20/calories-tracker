@@ -1,133 +1,172 @@
-'use client';
-import styles from './dashboard_style.module.css';
-//Importation from an extern library to use the visual gauge
-//import Stack from '@mui/material/Stack';
-import * as React from 'react';
-import { useState } from "react";
-import AddFoodModal from './components/foodmodal/FoodModal';
+"use client"
+import { useRouter } from 'next/navigation'
+import styles from "./styles_dashboard.module.css"
 import { Gauge } from '@mui/x-charts/Gauge';
-import { useEffect } from "react";
+import { useState, useEffect} from "react";
+import AddFoodModal from "../foodmodal/foodmodal";
+import { Products, Goal } from '@prisma/client';
+import  AddGoal from "../goalmodal/page";
 
 
 export default function DashboardPage(){
 
-    /*======================
-        TO OBTAIN THE DATE
-    ======================*/
-    const day = new Date();
-    const currentDate = day.toLocaleDateString("en-US",{
-        weekday:"long",
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-    });
-    const [ShowModal, setShowModal] = useState(false);
-    console.log("ShowModal:", ShowModal);
-    const [mealType, setMealType] = useState("");
+    //state that indicate the modal status (true or false)
+    const [showModal, setshowModal] = useState(false);
+    const [mealType, setmealType] = useState("");
+    const [product, setproduct] = useState<Products[]>([]);
+    const [Addgoal, setAddgoal] = useState(false);
+    const [showgoal, setshowgoal] = useState<Goal | null>(null);
+    const router = useRouter();
 
-    const closeModal = () => {
-        setShowModal(false);
-        setMealType("");
-    };
-
-    type Product = {
-        id: number;
-        foodname: string;
-        calories: number;
-        protein: number;
-        carbs: number;
-        fats: number;
-    }
-
-    const [breakfast, setBreakfast] = useState<Product[]>([]);
-    const [lunch, setLunch] =  useState<Product[]>([]);
-    const [dinner, setDinner] =   useState<Product[]>([]);
-
-
-
-        const userId =
+    //to obtain the user id
+    const storedUserId =
     typeof window !== "undefined"
-        ? Number(localStorage.getItem("userId"))
+        ? localStorage.getItem("userId")
         : null;
 
-    useEffect(() => {
-    if (!userId) return;
-
-    fetch(`/api/showproduct?userId=${userId}&mealType=breakfast`)
-        .then(res => res.json())
-        .then(setBreakfast);
-
-    fetch(`/api/showproduct?userId=${userId}&mealType=lunch`)
-        .then(res => res.json())
-        .then(setLunch);
-
-    fetch(`/api/showproduct?userId=${userId}&mealType=dinner`)
-        .then(res => res.json())
-        .then(setDinner);
-
-}, [userId]);
+    const userId = storedUserId ? Number(storedUserId) : null
+    
 
 
-const [showAllBreakfast, setShowAllBreakfast] = useState(false);
-const [showAllLunch, setShowAllLunch] = useState(false);
-const [showAllDinner, setShowAllDinner] = useState(false);
+     //function to close the modal
+    // to close the modal once I call this funcion
+    const closeModal = () => {
+        setshowModal(false);
+    }
+    const closeAddgoal = () =>{
+        setAddgoal(false);
+    }
 
-const breakfastToShow = showAllBreakfast
- ? breakfast: breakfast.slice(0,2);
+    console.log("modal status: " +showModal);
 
- const lunchToShow =showAllLunch
-    ? lunch
-    : lunch.slice(0,2);
+    
+        /*==========
+        TO LOGOUT
+        ==========*/
+    const handleLogout = () =>{
+        localStorage.removeItem("userId");
+        router.push("/login");
+    }
+    
+    useEffect(() =>{
 
-const dinnerToShow = showAllDinner
-    ? dinner
-    : dinner.slice(0,2);
+    if (userId === null || Number.isNaN(userId)) return;
 
+    const getGoal = async () => {
 
-    const AllProducts = [
-        ...breakfast,
-        ...lunch, 
-        ...dinner
-    ]
+        const response = await fetch(`/api/showgoalroute?userId=${userId}`);
 
+        const data = await response.json();
 
-    const totalcalorias = AllProducts.reduce((total,item) => total + item.calories, 0);
-    const totalProtein = AllProducts.reduce((total,item) => total + item.protein,0);
-    const totalCarbs = AllProducts.reduce((total, item) => total + item.carbs,0);
-    const totalFats = AllProducts.reduce((total,item) => total + item. fats, 0);
-
-    const calorieGoal = 2000;
-    const gaugeValue = (totalcalorias/calorieGoal) * 100;
-
-    /*DELTE BUTTON */
-    const deleteProduct = async(id: number) =>{
-        await fetch("api/deleteproduct", {
-            method: "DELETE", 
-            headers: {
-                "Content-Type" : "application/json"
-              }, 
-              body: JSON.stringify({id})
-        }); 
-
-        window.location.reload();
+        setshowgoal(data);
     };
 
-    //to log out
-    const logout = () => {
-    localStorage.removeItem("userId");
-    window.location.href = "/login";
+     getGoal();
+    }, [userId]);
+
+    /*=====================
+    TO OBTAIN ALL PRODUCTS
+    =====================*/
+    useEffect(() => {
+        if (userId === null || Number.isNaN(userId)) return;
+        const getProducts = async () => {
+            const response = await fetch(`/api/showproductroute?userId=${userId}`);
+            const data = await response.json();
+            setproduct(data);
+        };
+        if (!userId) return;
+            getProducts();
+    }, [userId]);
+
+    /*=====
+    DELETE PRODUCT
+    ======*/
+    const deleteProduct = async (id: number) => {
+
+    const response = await fetch("/api/deleteproductroute", {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            id: id,
+        }),
+    });
+
+    const data = await response.json();
+
+    if(response.ok){
+        console.log(data.message);
+
+        setproduct((prevProducts) =>
+            prevProducts.filter((product) => product.id !== id)
+        );
+    }
 };
 
+    //BREAKFAST FOOD
+    const breakfastFood = product.filter(
+        product=> product.mealType === "breakfast"
+    ); 
+  const lunchFood = product.filter(
+        product => product.mealType === "lunch"
+    );
+    const dinnerFood = product.filter(
+        product => product.mealType === "dinner"
+    );
+      /*=======
+        TO OBTAIN SUM OF CALORIES AND MICRONUTRIENTS
+    ===========*/
+
+     const sum_calories = product.reduce(
+      (total, product) => total + product.calories, 0
+    ); 
+    const sum_protein = product.reduce(
+        (total, product) => total + product.protein, 0
+    );
+    const sum_carbs = product.reduce(
+        (total, product) => total + product.carbs, 0
+    );
+    const sum_fats = product.reduce(
+        (total, product) => total + product.fats, 0
+    );
+
+    
+    if (userId === null || Number.isNaN(userId)) {
+    return <p>You must log in first.</p>;
+
+    }
+
+    const hasGoal = showgoal !== null;
+    const percentage = hasGoal
+        ? (sum_calories / showgoal.calories_goal) * 100
+        : 0;
+    const gaugeColor = !hasGoal
+        ? "#9E9E9E"    
+        : percentage < 70
+        ? "#4CAF50"    
+        : percentage < 100
+        ? "#FFC107"   
+        : "#F44336";  
+        
+    const remainingCalories = showgoal
+    ? Math.max(showgoal.calories_goal - sum_calories, 0)
+    : null;
+
+    
+    
 return(
 
+  
     <>
+      
     
     {/*==========================================
                 HEADER SECTION
     ===========================================*/}
         <header className={styles.header}>
             <p>Calorie Tracker</p>
-            <a onClick={logout}>Log out</a>
+            <button  className={styles.logout} onClick={handleLogout}> Log out </button>
          </header>
     
     {/*==========================================
@@ -135,44 +174,72 @@ return(
     ===========================================*/}
            
         <main className={styles.main}>
-            <h3>{currentDate}</h3>
+            <h3>
+                {new Date().toLocaleDateString("en-US", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                })}
+            </h3>
 
             <section className={styles.indicator_section}>
 
                   {/*===================
                         Gauge
                   ===================*/}
-                 <Gauge
-                    className={styles.gauge}
-                    value={gaugeValue}
-                    startAngle={-110}
-                    endAngle={110}
-                    sx={{
-                        '& .MuiGauge-valueText': {
-                            fontSize: 30,
-                            transform: 'translate(0px,0px)'
-                        }
-                    }}
-                    text={() => `${totalcalorias} / ${calorieGoal}`}
-                />
-
+                    <button className={styles.addgoals} onClick={() => setAddgoal(true)}>Add/Modify Goal</button>
+                  
+                   <div className={styles.gauge_container}>
+                        <Gauge
+                            className={styles.gauge}
+                            value={sum_calories}
+                            valueMax={showgoal?.calories_goal ?? Math.max(sum_calories, 1)}
+                            startAngle={-110}
+                            endAngle={110}
+                            sx={{
+                                "& .MuiGauge-valueArc": {
+                                    fill: gaugeColor,
+                                },
+                                "& .MuiGauge-referenceArc": {
+                                    fill: "#e0e0e0",
+                                },
+                                "& .MuiGauge-valueText": {
+                                    fontSize: 16,
+                                },
+                            }}
+                            text={() =>
+                                `${sum_calories} / ${
+                                    showgoal?.calories_goal ?? "No goal"
+                                }`
+                            }
+                        />
+                    </div>
                   {/*======================
                         Goal / Remaining
                   ======================*/}
                 <div className={styles.goal_remaining_container}>
                     {/* goal */}
                     <div className={styles.goal}>
-                        <p>{calorieGoal}</p>
-                        <p>{totalcalorias}</p>
+                        <p>GOAL</p>
+                        <p>{showgoal? `${showgoal.calories_goal} kcal`: "No goal"}</p>
                     </div>
 
                     {/* remaining */}
                     <div className={styles.remaining}>
                         <p>REMAINING</p>
-                        <p>{calorieGoal - totalcalorias}</p>
-                       
+                        <div className={styles.remaining_value}>
+                            <p>{showgoal ? `${remainingCalories} kcal` : "No goal"}</p>
+
+                            {percentage > 100 && (
+                                <>
+                                <span>-</span>
+                                <p className={styles.over_goal}> You have exceeded your goal! </p>
+                                </>
+                            )}
                     </div>
                 </div>
+            </div>
 
                 {/*===================
                       Macronutrients
@@ -183,15 +250,15 @@ return(
                     <div className={styles.nutrient}>
                         <div className={styles.nutrient_header}>
                             <span>Protein: </span>
-                            <span>{totalProtein}</span>
+                            <span>{sum_protein} / {showgoal?.protein_goal ?? "No goal"}</span>
                         </div>
                 </div>
                         
                 {/* carbohydrates */}
                 <div className={styles.nutrient}>
                         <div className={styles.nutrient_header}>
-                            <span>Carbohydrates: </span>
-                            <span>{totalCarbs}</span>
+                            <span>Carbs: </span>
+                            <span>{sum_carbs} / {showgoal?.carbs_goal ?? "No goal"}</span>
                     </div>
                 </div>
                         
@@ -199,7 +266,7 @@ return(
                 <div className={styles.nutrient}>
                     <div className={styles.nutrient_header}>
                             <span>Fats: </span>
-                            <span>{totalFats}</span>
+                            <span>{sum_fats} / {showgoal?.fats_goal ?? "No goal"}</span>
                         </div>
                     </div>
                 </div>
@@ -218,29 +285,27 @@ return(
                         <h3>🌄 Breakfast</h3>
                         
                         <div className={styles.meal_content}>
-                            {breakfast.length === 0 ? (
-                                    "No foods added yet"
-                                ) : (
-                                    breakfastToShow.map((item) => (
-                                    <div key={item.id} className={styles.product_items}>
-                                        <p >
-                                        {item.foodname} - {item.calories}kcal |  Protein: {item.protein} | Carbohydrates: {item.carbs} | Fats: {item.fats}
-                                        </p>
+                           {breakfastFood.map((product) =>(
+                                <div className={styles.product_item} key={product.id}>
+                                    <p>
+                                        {product.foodname} | Calories: {product.calories} kcal | Protein: {product.protein} g | Carbs: {product.carbs} g | Fats: {product.fats} g 
+                                    </p>
 
-                                        <button className={styles.delete_button} onClick={() => deleteProduct(item.id)}>Delete</button>
-                                    </div> 
-                                    ))
-                                )}
+                                    <button 
+                                        className={styles.delete_button} 
+                                        onClick={() => deleteProduct(product.id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            ))}                           
+
                         </div>
-
-                        <button className={styles.view_more}
-                        onClick={() => setShowAllBreakfast(!showAllBreakfast)}>
-                            {showAllBreakfast ? "view less" : "view more"}
+                        <button className={styles.view_more}>
+                          View more
                         </button>
 
-                        <button className={styles.add_food_button} onClick={() => {console.log("CLICK"); setMealType("breakfast");
-                            setShowModal(true);
-                            }}>
+                        <button className={styles.add_food_button}  onClick={() => { setshowModal(true); setmealType("breakfast")}}  >
                             + Add food
                         </button>
                     </div>
@@ -252,75 +317,84 @@ return(
                         <h3>🍽️ Lunch</h3>
                         
                         <div className={styles.meal_content}>
-                            {lunch.length === 0 ? (
-                                    "No foods added yet"
-                                ) : (
-                                    lunchToShow.map((item) => (
-                                   <div key={item.id} className={styles.product_items}>
-                                        <p >
-                                        {item.foodname} - {item.calories}kcal |  Protein: {item.protein} | Carbohydrates: {item.carbs} | Fats: {item.fats}
-                                        </p>
+                               {lunchFood.map((product) =>(
+                                <div className={styles.product_item} key={product.id}>
+                                    <p>
+                                        {product.foodname} | Calories: {product.calories} kcal | Protein: {product.protein} g | Carbs: {product.carbs} g | Fats: {product.fats} g 
+                                    </p>
 
-                                        <button className={styles.delete_button} onClick={() => deleteProduct(item.id)}>Delete</button>
-                                    </div>  
-                                    ))
-                                )}
+                                    <button 
+                                        className={styles.delete_button} 
+                                        onClick={() => deleteProduct(product.id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            ))}
                         </div>
-
-                        <button className={styles.view_more} onClick={() => setShowAllLunch(!showAllLunch)}>
+                            <button className={styles.view_more}>
                             View more
-                        </button>
+                            </button>                
 
-                         <button className={styles.add_food_button} onClick={() => {console.log("CLICK"); setMealType("lunch");
-                            setShowModal(true);
-                            }}>
-                            + Add food
-                        </button>
+                            <button className={styles.add_food_button} onClick={() => {setshowModal(true); setmealType("lunch")}} >
+                                + Add food
+                            </button>
                     </div>
 
                             
                     {/*==========================
                             DINNER    
                     ==========================*/}
-
-                    
-                     <div className={styles.meal_card}>
+                    <div className={styles.meal_card}>
                         <h3>🌙 Dinner</h3>
-                        
-                        <div className={styles.meal_content}>
-                            {dinner.length === 0 ? (
-                                    "No foods added yet"
-                                ) : (
-                                    dinnerToShow.map((item) => (
-                                    <div key={item.id} className={styles.product_items}>
-                                        <p >
-                                        {item.foodname} - {item.calories}kcal |  Protein: {item.protein} | Carbohydrates: {item.carbs} | Fats: {item.fats}
+
+                            <div className={styles.meal_content}>
+                                {dinnerFood.map((product) =>(
+                                    <div className={styles.product_item} key={product.id}>
+                                        <p>
+                                            {product.foodname} | Calories: {product.calories} kcal | Protein: {product.protein} g | Carbs: {product.carbs} g | Fats: {product.fats} g 
                                         </p>
 
-                                        <button className={styles.delete_button} onClick={() => deleteProduct(item.id)}>Delete</button>
-                                    </div> 
-                                    ))
-                                )}
-                        </div> 
+                                        <button 
+                                            className={styles.delete_button} 
+                                            onClick={() => deleteProduct(product.id)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
 
-                        <button className={styles.view_more} onClick={() => setShowAllDinner(!showAllDinner)}>View more </button>
-                        
-                        <button className={styles.add_food_button} onClick={() => {console.log("CLICK"); setMealType("dinner");
-                            setShowModal(true);
-                            }}>
-                            + Add food
-                        </button>
-                    </div>
+                            <button className={styles.view_more}>
+                                View more
+                            </button>
+                            
+                            <button 
+                                className={styles.add_food_button} 
+                                onClick={() => {
+                                    setshowModal(true); 
+                                    setmealType("dinner")
+                                }}
+                            >
+                                + Add food
+                            </button>
+                        </div>
                 </section>
             </main>
-
-                    
+            
             <AddFoodModal
-            open={ShowModal}
-            onClose={closeModal}
-            mealType={mealType}
+                open = {showModal}
+                onClose  = {closeModal}  
+                mealType = {mealType}
+                userId={userId}
             />
 
+            <AddGoal
+                open = {Addgoal}
+                onClose = {closeAddgoal}
+                userId={userId}
+                />
+                    
         </>
     );
 }

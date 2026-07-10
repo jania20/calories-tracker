@@ -52,7 +52,7 @@ export default function SignUpPage(){
                 return;
             }
 
-            const response = await fetch("/api/register",{
+            const response = await fetch("/api/registerroute",{
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

@@ -31,7 +31,7 @@ export default function LoginPage(){
                 }
                 
         //To send data to the backend
-            const response = await fetch("/api/login", {
+            const response = await fetch("/api/loginroute", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -50,7 +50,7 @@ export default function LoginPage(){
 
             localStorage.setItem("userId", data.userId);
             
-            router.push('/dashboardbackup');
+            router.push('/dashboard');
             
         }
 
