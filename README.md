@@ -49,10 +49,11 @@ Open the application: http://localhost:3000/login
 The application will be ready to use. Users can register, log in, and start tracking their meals and nutritional information.
 
 
-<img width="1530" height="864" alt="{BFA76819-A95F-4951-B11F-4172568BC837}" src="https://github.com/user-attachments/assets/4d4ec01a-0e27-4049-a25e-66dcc80b871c" />
-<img width="1365" height="873" alt="{B132B268-5C56-42FE-9D42-BFEA1AF29A78}" src="https://github.com/user-attachments/assets/068e86d8-cc99-4729-bb73-dd07ffd56c72" />
-<img width="1968" height="848" alt="{D341DE2C-3D29-40DD-8C84-1A3E7932DCC2}" src="https://github.com/user-attachments/assets/057f8c88-b515-4437-bd16-fbf9ad5ebdb3" />
-<img width="1718" height="600" alt="{C59D0DD4-7880-4520-A12A-397DCE05A647}" src="https://github.com/user-attachments/assets/62d9f7b3-771f-4ee1-b32d-315e66ac93c6" />
+<img width="1420" height="865" alt="{43EC47C6-13C5-414B-AC47-64EBD0F3B685}" src="https://github.com/user-attachments/assets/5a829630-8aff-4119-b7c1-bb248bafb97a" />
+<img width="1385" height="868" alt="image" src="https://github.com/user-attachments/assets/63b4a305-219f-4b46-83a4-05ad93bfd698" />
+<img width="1492" height="866" alt="{48CA2714-EB18-45C3-BC43-BC7593724F5F}" src="https://github.com/user-attachments/assets/45cc050d-a9aa-4633-92f0-c1024cb27416" />
+<img width="1229" height="837" alt="{06306B50-5C59-498C-8849-4F20F40BC7E6}" src="https://github.com/user-attachments/assets/82f23b47-a2b2-4e6f-b2ce-c0caa29f0561" />
+
 
 
 
