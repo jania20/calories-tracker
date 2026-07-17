@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
-
-const prisma = new PrismaClient();
 
 
 function validEmail(email: string){
@@ -10,7 +8,10 @@ function validEmail(email: string){
     }
 
 export async function POST(request: Request) {
-    const info = await request.json();
+   
+    try {
+
+        const info = await request.json();
     const {email,password} = info;
 
     if(email==="" ||  password===""){
@@ -33,7 +34,7 @@ export async function POST(request: Request) {
 
     if(!existingUser){
         return Response.json(
-            {error: "Email no existe"},
+            {error: "Email no existe, go to the sign up section"},
             {status: 404}
         )
     }
@@ -48,7 +49,17 @@ export async function POST(request: Request) {
     }
 
     return Response.json({
-        mesage: "Login exitoso",
+        message: "Login exitoso",
         userId: existingUser.id
     });
+        
+    } catch (error) {
+        console.log(error);
+        return Response.json(
+            {error: "Server error"}, 
+            {status: 500}
+        );
+    }
+   
+    
 }

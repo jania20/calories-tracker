@@ -7,16 +7,14 @@ import styles from './signup_style.module.css'
 import {useRouter} from "next/navigation";
 
 
-/*import {Icon} from 'react-icons-kit';
-import {eyeOff} from 'react-icons-kit/feather/eyeOff';
-import {eye} from 'react-icons-kit/feather/eye'*/
+
 
 export default function SignUpPage(){
 
      /*==========================================================
             VALIDATIONS USING USESTATE()
     ==========================================================*/ 
-
+    
      
     //States of email and password
     const [lastname,setLastname] = useState("");
@@ -25,9 +23,6 @@ export default function SignUpPage(){
     const [password,setPassword] = useState("");
     const router = useRouter();
 
-    
-   // const [type, setType] = useState('password');
-   // const [icon, setIcon] = useState(eyeOff);
 
     //Event executed once user click on the log in button
     const handleRegister = async (e: React.FormEvent) => {
@@ -76,21 +71,10 @@ export default function SignUpPage(){
                 }
             }
 
-            /*Conditional to show password within the input 
-
-            const handleToggle = () => {
-            if (type==='password'){
-                setIcon(eye);
-                setType('text')
-            } else {
-                setIcon(eyeOff)
-                setType('password')
-            }
-            }*/
         
 
     /*==========================================================
-                        FUNCTIONS
+                FUNCTIONS VALIDATIONS
     ==========================================================*/
     //name function
     const validName = (name: string) : boolean =>{

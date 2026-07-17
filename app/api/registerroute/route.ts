@@ -1,7 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 
-const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -77,6 +76,15 @@ export async function POST(req: Request) {
             password: hashPassword
                 }
             });
+        console.log("Usuario registrado exitosamente", user);
 
-  return Response.json(user);
+  return Response.json(
+    {
+        message: "Usuario registrado exitosamente", 
+        userId: user.id
+    }, 
+    {
+        status: 201
+    }
+  );
 }

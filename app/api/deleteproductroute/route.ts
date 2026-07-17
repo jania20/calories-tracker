@@ -1,11 +1,13 @@
 
 import {NextResponse} from "next/server";
-import {PrismaClient} from "@prisma/client";
+import {prisma} from "@/lib/prisma";
 
-const prisma = new PrismaClient();
+
 
 export async function DELETE(request: Request){
-    const body = await request.json();
+
+    try {
+         const body = await request.json();
 
     const {id} = body;
 
@@ -15,14 +17,39 @@ export async function DELETE(request: Request){
             {status: 400}
         );
     }
-
-    await prisma.products.delete({
-        where: {
-            id: Number(id)
+/*
+    const existing_product = await prisma.products.findUnique({
+    where: {
+        id: Number(id)
         }
     });
 
+    if(!existing_product){
+        return NextResponse.json(
+           {error: "Product id no registrado"},
+           {status: 404}
+          );
+        }
+*/
+
+     await prisma.products.delete({
+        where: {
+            id: Number(id)
+        }
+      });
+
     return NextResponse.json({
         mesasage: "Product deleted succesfully"
-    });
+    }); 
+
+
+    } catch (error) {
+
+        console.log(error);
+        return Response.json(
+            {error: "Server error"},
+            {status: 500}
+        )
+    }
+  
 }

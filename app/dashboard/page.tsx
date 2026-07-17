@@ -17,36 +17,110 @@ export default function DashboardPage(){
     const [Addgoal, setAddgoal] = useState(false);
     const [showgoal, setshowgoal] = useState<Goal | null>(null);
     const router = useRouter();
+    const [userId, setUserId] = useState<number | null>(null);
+    const [loadingUser, setLoadingUser] = useState(true);
 
     //to obtain the user id
-    const storedUserId =
-    typeof window !== "undefined"
-        ? localStorage.getItem("userId")
-        : null;
+    useEffect(() => {
+    const timer = setTimeout(() => {
+        const storedUserId = localStorage.getItem("userId");
 
-    const userId = storedUserId ? Number(storedUserId) : null
+        if(storedUserId){
+            setUserId(Number(storedUserId));
+        }
+
+        setLoadingUser(false);
+    }, 0);
+
+    return () => clearTimeout(timer);
+
+}, []);
+
     
+    /*======================
+            TO LOGOUT
+    ========================*/
+    const handleLogout = () =>{
+        localStorage.removeItem("userId");
+        router.push("/login");
+    }
 
-
+    /*========================
+       CLOSE MODAL FUNCTION
+    ========================*/
      //function to close the modal
     // to close the modal once I call this funcion
     const closeModal = () => {
         setshowModal(false);
     }
+
+
+    ////////////////
     const closeAddgoal = () =>{
         setAddgoal(false);
     }
 
     console.log("modal status: " +showModal);
 
+    /*=====================
+    TO OBTAIN ALL PRODUCTS
+    =====================*/
+    useEffect(() => {
+        if (userId === null || Number.isNaN(userId)) return;
+        const getProducts = async () => {
+            const response = await fetch(`/api/showproductroute?userId=${userId}`);
+            const data = await response.json();
+            setproduct(data);
+        };
+            getProducts();
+    }, [userId]);
     
-        /*==========
-        TO LOGOUT
-        ==========*/
-    const handleLogout = () =>{
-        localStorage.removeItem("userId");
-        router.push("/login");
+    
+
+    //BREAKFAST FOOD
+    const breakfastFood = product.filter(
+        product=> product.mealType === "breakfast"
+    ); 
+  const lunchFood = product.filter(
+        product => product.mealType === "lunch"
+    );
+    const dinnerFood = product.filter(
+        product => product.mealType === "dinner"
+    );
+    
+
+    
+    /*=====
+    DELETE PRODUCT
+    ======*/
+    const deleteProduct = async (id: number) => {
+
+    const response = await fetch("/api/deleteproductroute", {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            id: id,
+        }),
+    });
+    
+
+    const data = await response.json();
+
+    if(response.ok){
+        console.log(data.message);
+
+        setproduct((prevProducts) =>
+            prevProducts.filter((product) => product.id !== id)
+        );
+        };
     }
+   
+
+    /*=====================================
+        USE EFECT TO SET GOAL
+    ======================================*/
     
     useEffect(() =>{
 
@@ -64,56 +138,6 @@ export default function DashboardPage(){
      getGoal();
     }, [userId]);
 
-    /*=====================
-    TO OBTAIN ALL PRODUCTS
-    =====================*/
-    useEffect(() => {
-        if (userId === null || Number.isNaN(userId)) return;
-        const getProducts = async () => {
-            const response = await fetch(`/api/showproductroute?userId=${userId}`);
-            const data = await response.json();
-            setproduct(data);
-        };
-        if (!userId) return;
-            getProducts();
-    }, [userId]);
-
-    /*=====
-    DELETE PRODUCT
-    ======*/
-    const deleteProduct = async (id: number) => {
-
-    const response = await fetch("/api/deleteproductroute", {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            id: id,
-        }),
-    });
-
-    const data = await response.json();
-
-    if(response.ok){
-        console.log(data.message);
-
-        setproduct((prevProducts) =>
-            prevProducts.filter((product) => product.id !== id)
-        );
-    }
-};
-
-    //BREAKFAST FOOD
-    const breakfastFood = product.filter(
-        product=> product.mealType === "breakfast"
-    ); 
-  const lunchFood = product.filter(
-        product => product.mealType === "lunch"
-    );
-    const dinnerFood = product.filter(
-        product => product.mealType === "dinner"
-    );
       /*=======
         TO OBTAIN SUM OF CALORIES AND MICRONUTRIENTS
     ===========*/
@@ -131,11 +155,7 @@ export default function DashboardPage(){
         (total, product) => total + product.fats, 0
     );
 
-    
-    if (userId === null || Number.isNaN(userId)) {
-    return <p>You must log in first.</p>;
-
-    }
+   
 
     const hasGoal = showgoal !== null;
     const percentage = hasGoal
@@ -153,7 +173,15 @@ export default function DashboardPage(){
     ? Math.max(showgoal.calories_goal - sum_calories, 0)
     : null;
 
-    
+
+    if(loadingUser){
+        return <p>Loading...</p>;
+    }
+
+    if(userId === null){
+        return <p>You must log in first.</p>;
+    }
+            
     
 return(
 

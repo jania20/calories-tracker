@@ -30,18 +30,23 @@ export default function AddFoodModal({open, onClose, mealType, userId}:Props){
     const  AddProduct = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        //validates empty fields
+        if(!foodname.trim() || calories === "" ||protein === "" || carbs ==="" || fats===""){
+            alert("Campos no pueden estar vacio. Las calorias y micronutrientes tienen que ser mayor o igual a cero");
+            return;
+        }
+
         const caloriesNumber = Number(calories);
         const proteinNumber = Number(protein);
         const carbsNumber = Number(carbs);
         const fatsNumber = Number(fats);
         
         //validates empty fields
-        if(foodname ==="" || caloriesNumber<0 ||proteinNumber<0 || carbsNumber<0 || fatsNumber<0){
-            alert("Campos no pueden estar vacio. Las calorias y micronutrientes tienen que ser mayor o igual a cero");
+        if( caloriesNumber<=0 ||proteinNumber<0 || carbsNumber<0 || fatsNumber<0){
+            alert("Numero no valido");
             return;
         }
-        alert("Producto agregado");
-        console.log("producto agregado");
+        
         onClose();
         window.location.reload();
 
@@ -65,6 +70,10 @@ export default function AddFoodModal({open, onClose, mealType, userId}:Props){
 
         const result = await connect.json();
         console.log(result.message);
+        
+
+        alert("Producto agregado");
+        console.log("producto agregado");
 
         //reset variables
         setfoodname("");

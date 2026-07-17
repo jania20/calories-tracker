@@ -1,8 +1,8 @@
 
 
-import { PrismaClient } from '@prisma/client';
+import {prisma } from '@/lib/prisma';
 
-const prisma = new PrismaClient();
+
 
 export async function POST(request: Request){
     const {userId,calories_goal,protein_goal,carbs_goal,fats_goal} = await request.json();
